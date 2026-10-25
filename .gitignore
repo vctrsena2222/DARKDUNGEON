@@ -1,0 +1,19 @@
+
+# Visual Studio
+.vs/
+
+# Arquivos de compilação
+x64/
+Debug/
+Release/
+**/x64/
+**/Debug/
+**/Release/
+
+# Arquivos intermediários do C++
+*.obj
+*.ilk
+*.pdb
+*.idb
+*.tlog
+*.ipch

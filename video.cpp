@@ -31,7 +31,10 @@ void desenharQuadrado(SDL_FRect& quadrado) {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
 	SDL_RenderFillRect(renderer, &quadrado);
+
 }
+
+
 
 void redefinirRenderer() {
 

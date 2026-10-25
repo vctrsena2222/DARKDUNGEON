@@ -6,6 +6,14 @@ class entidade {
 protected: //um especificador de acesso que permite que o atributo seja acessado apenas por metodos da classe ou por classes derivadas desta
 	SDL_FRect quadrado;
 	SDL_FRect quadrado_colisao;
+	enum direcao {
+		cima,
+		baixo,
+		direita,
+		esquerda,
+		
+
+	};
 
 private:
 
@@ -17,6 +25,7 @@ public:
 		quadrado_colisao.w = 50;
 		quadrado_colisao.h = 50;
 	}
+
 	
 
 };

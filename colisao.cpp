@@ -1,7 +1,7 @@
 #include <SDL3/SDL.h>
 
 
-void colisao(SDL_FRect& jogador, const SDL_FRect& obstaculo,
+void colisao(SDL_FRect& jogador, const SDL_FRect& obstaculo,//função de colisão com objetos estaticos
     float xAnterior, float yAnterior)
 {
     bool colidiu =
