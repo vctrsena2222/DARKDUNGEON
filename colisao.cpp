@@ -35,3 +35,16 @@ void colisao(SDL_FRect& jogador, const SDL_FRect& obstaculo,//função de colisão 
     }
 }
 
+bool colisao_porta(const SDL_FRect& jogador, const SDL_FRect& obstaculo)
+{
+    bool colidiu =
+        jogador.x < obstaculo.x + obstaculo.w &&
+        jogador.x + jogador.w > obstaculo.x &&
+        jogador.y < obstaculo.y + obstaculo.h &&
+        jogador.y + jogador.h > obstaculo.y;
+
+    if (colidiu)
+        return true;
+
+    return false;
+}

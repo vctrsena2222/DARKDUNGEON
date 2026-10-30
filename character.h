@@ -37,6 +37,10 @@ public:
 	void posicao_hitbox();
     float getxanterior();
 	float getyanterior();
+	void atualizar_posicao_anterior() {
+		xanterior = quadrado.x;
+		yanterior = quadrado.y;
+	}
 
 private:
 	

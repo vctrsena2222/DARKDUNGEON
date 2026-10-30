@@ -3,8 +3,8 @@
 
 SDL_Window* janela;
 SDL_Renderer* renderer;
-const int largura = 1200;
-const int altura = 800;
+extern const int largura = 1200;
+extern const int altura = 800;
 
 void criarJanela() {
 

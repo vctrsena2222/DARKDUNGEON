@@ -4,14 +4,16 @@
 #include "enemy.h"
 #include "colisao.h"
 #include "rooms.h"
-//PARA CRIAR PAREDE
-paredes parede_superior;//criar o objeto, usando rooms.h
+
+sala sala_atual; 
 jogador j;
 inimigo i(600, 600);
 inimigo i2(600,700);
 
-
+TipoSala tipo = TipoSala::sala1;
 void loop_principal() {
+	sala_atual.configurar_sala(TipoSala::sala1, largura, altura);
+
 	
 
 	
@@ -32,17 +34,16 @@ void loop_principal() {
 		j.defendendo(teclado_movimento, i);
 
 		j.movimentoJogador(teclado_movimento);
+		sala_atual.verificar_colisoes(j);
 		
 		i.movimentoInimigo(j.usarquadrado());
 		i.posicao_hitbox_inimigo(j.usarquadrado());
 		i.colisao_de_ataque(j.usarquadrado(), j);
 
-		//TESTE: DESENHANDO PAREDES E APLICANDO COLISAO
-		parede_superior.criar_parede(0.0f, 0.0f, 1200.0f, 20.0f);//primeiro usa-se o metodo para determinar tamanho e posição do objeto
-		desenharQuadrado(parede_superior.usarquadrado_paredes());//desenhe esse objeto usando o metodo desenhar quadrado declarado em video
-		colisao(j.usarquadrado(), parede_superior.usarquadrado_paredes(), j.getxanterior(), j.getyanterior()); //usa a função de colisão no colisão.h
-
-		//
+		sala_atual.desenhar_paredes();
+		sala_atual.desenhar_portas();
+		sala_atual.transicao_de_sala(j, tipo, largura, altura);
+		
 
 		desenharQuadrado(i.usarquadrado_colisao());
 

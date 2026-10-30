@@ -3,3 +3,4 @@
 
 void colisao(SDL_FRect& jogador, const SDL_FRect& obstaculo,
     float xAnterior, float yAnterior);
+bool colisao_porta(const SDL_FRect& jogador, const SDL_FRect& obstaculo);
