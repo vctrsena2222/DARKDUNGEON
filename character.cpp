@@ -4,30 +4,35 @@
 #include "character.h"
 
 void jogador::movimentoJogador(const bool* teclado_movimento) {
-    teclado_movimento = SDL_GetKeyboardState(NULL);
+	teclado_movimento = SDL_GetKeyboardState(NULL);
+
 	xanterior = quadrado.x;
 	yanterior = quadrado.y;
 
-	if (teclado_movimento[SDL_SCANCODE_W] or teclado_movimento[SDL_SCANCODE_UP]) {//cima
-		quadrado.y -= velocidade;
+	float velocidade_atual = velocidade;
+
+	if (teclado_movimento[SDL_SCANCODE_LSHIFT] ||
+		teclado_movimento[SDL_SCANCODE_RSHIFT]) {
+		velocidade_atual *= 1.5f;
+	}
+
+	if (teclado_movimento[SDL_SCANCODE_W] or teclado_movimento[SDL_SCANCODE_UP]) {
+		quadrado.y -= velocidade_atual;
 		jogador_direcao = cima;
 	}
-	if (teclado_movimento[SDL_SCANCODE_S] or teclado_movimento[SDL_SCANCODE_DOWN]) {//baixo
-		quadrado.y += velocidade;
+	if (teclado_movimento[SDL_SCANCODE_S] or teclado_movimento[SDL_SCANCODE_DOWN]) {
+		quadrado.y += velocidade_atual;
 		jogador_direcao = baixo;
-
 	}
-	if (teclado_movimento[SDL_SCANCODE_D] or teclado_movimento[SDL_SCANCODE_RIGHT]) {//direita
-		quadrado.x += velocidade;
+	if (teclado_movimento[SDL_SCANCODE_D] or teclado_movimento[SDL_SCANCODE_RIGHT]) {
+		quadrado.x += velocidade_atual;
 		jogador_direcao = direita;
 	}
-    if (teclado_movimento[SDL_SCANCODE_A] or teclado_movimento[SDL_SCANCODE_LEFT]) {//esquerda
-		quadrado.x -= velocidade;
+	if (teclado_movimento[SDL_SCANCODE_A] or teclado_movimento[SDL_SCANCODE_LEFT]) {
+		quadrado.x -= velocidade_atual;
 		jogador_direcao = esquerda;
 	}
-
-
-
+	esta_movendo = (quadrado.x != xanterior || quadrado.y != yanterior);
 }
 void jogador::posicao_hitbox() {
 
@@ -50,21 +55,21 @@ void jogador::posicao_hitbox() {
 
 };
 
-void jogador::atacando(SDL_Event evento, inimigo& inimigo) {
+bool jogador::atacando(const SDL_Event& evento) {
 
-    if (evento.type == SDL_EVENT_MOUSE_BUTTON_DOWN &&
-		evento.button.button == SDL_BUTTON_LEFT)//se evento recebe um objeto que identifica quando o botão do mouse é apertado e esse botão é o botao esquerdo
-	{
-		atacando_jogador = true; //atacando vai pra true
+	if (evento.type == SDL_EVENT_MOUSE_BUTTON_DOWN &&
+		evento.button.button == SDL_BUTTON_LEFT) {
+
+		atacando_jogador = true;
+		inicio_ataque = SDL_GetTicks();
+
+		return true;
 	}
-	else { atacando_jogador = false; }
-	inimigo.inimigo_recebe_dano(atacando_jogador, quadrado_colisao);
-	std::cout << "atacou " << atacando_jogador << std::endl;
-	
+
+	return false;
 }
 
-void jogador::defendendo(const bool* teclado_movimento, inimigo& inimigo) {
-
+void jogador::defendendo(const bool* teclado_movimento) {
 	defesa_jogador = teclado_movimento[SDL_SCANCODE_SPACE];
 
 	if (defesa_jogador && !defesa_anterior) {
@@ -73,8 +78,6 @@ void jogador::defendendo(const bool* teclado_movimento, inimigo& inimigo) {
 
 	defesa_anterior = defesa_jogador;
 }
-
-
 
 void jogador::receber_dano(bool inimigo_atacando) {
 	if (inimigo_atacando && !defesa_jogador) { vida_jogador -= 1; };

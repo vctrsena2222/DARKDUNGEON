@@ -29,9 +29,28 @@ public:
 		return inicio_defesa;
 	
 	};
+	int get_vida() const {
+		return vida_jogador;
+	}
+	bool get_esta_movendo() const {
+		return esta_movendo;
+	}
+	bool esta_atacando() const {
+		return atacando_jogador &&
+			SDL_GetTicks() - inicio_ataque < 360;
+	}
 
-	void atacando(SDL_Event evento, inimigo& inimigo);
-	void defendendo(const bool* teclado_movimento, inimigo& inimigo);
+	Uint64 get_inicio_ataque() const {
+		return inicio_ataque;
+	}
+
+	bool atacando(const SDL_Event& evento);
+
+	bool olhando_para_esquerda() const {
+		return jogador_direcao == esquerda;
+	}
+	
+	void defendendo(const bool* teclado_movimento);
 	void receber_dano(bool inimigo_atacando);
 	void movimentoJogador(const bool* teclado_movimento);
 	void posicao_hitbox();
@@ -44,17 +63,20 @@ public:
 
 private:
 	
-	int vida_jogador = 100;
-	float velocidade = 0.25f;
+	int vida_jogador = 1;
+	float velocidade = 0.15f;
 
 	float xanterior;
 	float yanterior;
 
 	bool atacando_jogador = false;
+	Uint64 inicio_ataque = 0;
 	bool defesa_jogador = false;
 	bool defesa_anterior = false;
 	Uint64 inicio_defesa = 0;
-	direcao jogador_direcao = direita;
+	direcao jogador_direcao;
+
+	bool esta_movendo = false;
 
 
 };

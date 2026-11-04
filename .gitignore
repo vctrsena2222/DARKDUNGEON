@@ -17,3 +17,5 @@ Release/
 *.idb
 *.tlog
 *.ipch
+.json
+CppProperties.json

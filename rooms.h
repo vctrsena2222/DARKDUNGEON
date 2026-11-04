@@ -1,9 +1,10 @@
 
 #pragma once
-
 #include <vector>
 #include <SDL3/SDL.h>
+#include <memory>
 #include "character.h"
+#include "enemy.h"
 
 enum class TipoSala {
     sala1,
@@ -50,6 +51,7 @@ class sala {
 private:
     std::vector<paredes> lista_paredes;
     std::vector<porta> lista_porta;
+    std::vector<std::unique_ptr<inimigo>> lista_inimigos;
 
 public:
     void configurar_sala(TipoSala tipo, int largura, int altura);
@@ -64,4 +66,9 @@ public:
 
     void desenhar_paredes();
     void desenhar_portas();
+    void desenhar_inimigos();
+    void configurar_inimigos(jogador& jogador);
+    void aplicar_ataque(jogador& jogador);
+    void afastar_inimigos();
+    void matar_inimigos();
 };

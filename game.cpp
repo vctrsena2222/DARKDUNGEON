@@ -1,3 +1,4 @@
+#include <iostream>
 #include <SDL3/SDL.h>
 #include "video.h"
 #include "character.h"
@@ -7,8 +8,6 @@
 
 sala sala_atual; 
 jogador j;
-inimigo i(600, 600);
-inimigo i2(600,700);
 
 TipoSala tipo = TipoSala::sala1;
 void loop_principal() {
@@ -18,59 +17,82 @@ void loop_principal() {
 
 	
 	bool rodando = true;
-	while (rodando) {
+    while (rodando) {
 
-		const bool* teclado_movimento = SDL_GetKeyboardState(NULL);
-		SDL_Event evento;
+        const bool* teclado_movimento = SDL_GetKeyboardState(NULL);
+        SDL_Event evento;
 
-		while (SDL_PollEvent(&evento)) 
-		{
-			if (evento.type == SDL_EVENT_QUIT) //evento recebe um objeto que fecha o progama, permite apertar X na janela
-				rodando = false;// sai do loop principal
-			j.atacando(evento, i);
-			
+        bool ataque_solicitado = false;
 
-		}
-		j.defendendo(teclado_movimento, i);
+        while (SDL_PollEvent(&evento)) {
+            if (evento.type == SDL_EVENT_QUIT) {
+                rodando = false;
+            }
 
-		j.movimentoJogador(teclado_movimento);
-		sala_atual.verificar_colisoes(j);
+            if (j.atacando(evento)) {
+                ataque_solicitado = true;
+            }
+        }
+        if (j.get_vida() <= 0) {
+            rodando = false;
+            std::cout << "voce morreu";
+        }
+       
+        j.defendendo(teclado_movimento);
+
+        j.movimentoJogador(teclado_movimento);
+        j.posicao_hitbox();
+
+        sala_atual.verificar_colisoes(j);
+
+        sala_atual.configurar_inimigos(j);
+
+        sala_atual.afastar_inimigos();
+
+        if (ataque_solicitado) {
+            sala_atual.aplicar_ataque(j);
+        }
+        sala_atual.matar_inimigos();
+
+        sala_atual.desenhar_paredes();
+        sala_atual.desenhar_portas();
+        sala_atual.desenhar_inimigos();
+
+        sala_atual.transicao_de_sala(j, tipo, largura, altura);
+
+        if (j.esta_defendendo()) {
+            desenhoJogador_defendendo(
+                j.usarquadrado(),
+                j.olhando_para_esquerda(),
+                j.get_inicio_defesa()
+            );
+        }
+        else if (j.esta_atacando()) {
+            desenhoJogador_atacando(
+                j.usarquadrado(),
+                j.olhando_para_esquerda(),
+                j.get_inicio_ataque()
+            );
+        }
+        else if (j.get_esta_movendo()) {
+            desenhoJogador_andando(
+                j.usarquadrado(),
+                j.olhando_para_esquerda()
+            );
+        }
+        else {
+            desenhoJogador(
+                j.usarquadrado(),
+                j.olhando_para_esquerda()
+            );
+        } 
+
+        executarRenderer();
+        redefinirRenderer();
+        limparFrame();
+    }
+
 		
-		i.movimentoInimigo(j.usarquadrado());
-		i.posicao_hitbox_inimigo(j.usarquadrado());
-		i.colisao_de_ataque(j.usarquadrado(), j);
-
-		sala_atual.desenhar_paredes();
-		sala_atual.desenhar_portas();
-		sala_atual.transicao_de_sala(j, tipo, largura, altura);
-		
-
-		desenharQuadrado(i.usarquadrado_colisao());
-
-		desenharQuadrado(j.usarquadrado());
-		desenharQuadrado(j.usarquadrado_colisao());
-
-		j.posicao_hitbox();
-
-		desenharQuadrado(i.usarquadrado());
-		i.mudanca_de_cor(renderer);
-		
-
-	
-
-		
-
-		executarRenderer();
-
-		redefinirRenderer();
-
-		limparFrame();
-		
 
 
-	}
-
-		
-
-
-}//CRIAR DETECÇÃO DE PROXIMIDADE PARA INIMIGO E RESTRINGIR A FUNÇÃO DE COLISÃO PARA AS PAREDES
+}
