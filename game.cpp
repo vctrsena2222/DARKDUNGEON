@@ -54,6 +54,8 @@ void loop_principal() {
         }
         sala_atual.matar_inimigos();
 
+        desenharCenario();
+
         sala_atual.desenhar_paredes();
         sala_atual.desenhar_portas();
         sala_atual.desenhar_inimigos();

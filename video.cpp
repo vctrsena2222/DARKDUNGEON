@@ -1,11 +1,12 @@
 #include <SDL3/SDL.h>
 #include <iostream>
 #include <SDL3_image/SDL_image.h>
+#include <algorithm>
 #include "video.h"
 
 SDL_Window* janela;
 SDL_Renderer* renderer;
-
+ //texturas do jogador
 SDL_Texture* textura_jogador = nullptr;
 SDL_Texture* textura_jogador_andando = nullptr;
 SDL_Texture* textura_jogador_defendendo = nullptr;
@@ -16,13 +17,30 @@ SDL_Texture* textura_orc_parado = nullptr;
 SDL_Texture* textura_orc_andando = nullptr;
 SDL_Texture* textura_orc_atacando = nullptr;
 
+//  texturas do cenario
+SDL_Texture* textura_cenario = nullptr;
 int frame_atual = 0;
 Uint64 tempo_ultimo_frame = 0;
 
 extern const int largura = 1200;
 extern const int altura = 800;
 
+bool carregarTexturaCenario() {
 
+    textura_cenario = IMG_LoadTexture(
+        renderer,
+        "assets/cenario/Dungeon_Tileset.png"
+    );
+
+    if (textura_cenario == nullptr) {
+        std::cout << "Erro ao carregar cenario: "
+            << SDL_GetError() << '\n';
+
+        return false;
+    }
+
+    return true;
+}
 bool carregarTextura_jogador_parado() {
 
     textura_jogador = IMG_LoadTexture(
@@ -126,7 +144,7 @@ bool carregarTexturas_inimigo() {
     return idle && walk && attack;
 }
 
-
+//funções da janela 
 void criarJanela() {
 
     janela = SDL_CreateWindow(
@@ -157,8 +175,112 @@ void criarJanela() {
     if (!carregarTexturas_inimigo()) {
         std::cout << "Falha ao carregar uma ou mais texturas do Orc.\n";
     }
+    if (!carregarTexturaCenario()) {
+        std::cout << "Falha ao carregar textura do cenario.\n";
+    }
+}
+//função do cenario
+
+void desenharCenario() {
+
+    SDL_FRect src{ 0, 96, 64, 32 };
+
+    for (int y = 0; y < altura; y += 32) {
+        for (int x = 0; x < largura; x += 64) {
+
+            SDL_FRect destino{
+                static_cast<float>(x),
+                static_cast<float>(y),
+                64.0f,
+                32.0f
+            };
+
+            SDL_RenderTexture(
+                renderer,
+                textura_cenario,
+                &src,
+                &destino
+            );
+        }
+    }
+}
+void desenharParede(SDL_FRect& destino) {
+
+    if (textura_cenario == nullptr || renderer == nullptr)
+        return;
+
+    // Parede horizontal
+    if (destino.w >= destino.h) {
+
+        float x = destino.x;
+        float limite = destino.x + destino.w;
+
+        while (x < limite) {
+
+            float largura = std::min(64.0f, limite - x);
+
+            SDL_FRect src{ 16, 64, largura, 16 };
+
+            SDL_FRect dst{
+                x,
+                destino.y,
+                largura,
+                destino.h
+            };
+
+            SDL_RenderTexture(renderer, textura_cenario, &src, &dst);
+
+            x += largura;
+        }
+    }
+
+    // Parede vertical
+    else {
+
+        float y = destino.y;
+        float limite = destino.y + destino.h;
+
+        while (y < limite) {
+
+            float altura = std::min(48.0f, limite - y);
+
+            SDL_FRect src{ 0, 16, 16, altura };
+
+            SDL_FRect dst{
+                destino.x,
+                y,
+                destino.w,
+                altura
+            };
+
+            SDL_RenderTexture(renderer, textura_cenario, &src, &dst);
+
+            y += altura;
+        }
+    }
 }
 
+void desenharPorta(SDL_FRect& destino) {
+
+    if (textura_cenario == nullptr || renderer == nullptr)
+        return;
+
+    SDL_FRect src{ 136, 72, 8, 24 };
+  
+    float escala = std::min(
+        destino.w / src.w,
+        destino.h / src.h
+    );
+
+    SDL_FRect dst{
+        destino.x + (destino.w - src.w * escala) / 2.0f,
+        destino.y + (destino.h - src.h * escala) / 2.0f,
+        src.w * escala,
+        src.h * escala
+    };
+
+    SDL_RenderTexture(renderer, textura_cenario, &src, &dst);
+}
 
 void desenhoJogador(SDL_FRect& destino, bool olhando_esquerda) {
 
@@ -181,6 +303,8 @@ void desenhoJogador(SDL_FRect& destino, bool olhando_esquerda) {
         olhando_esquerda ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE
     );
 }
+
+
 
 
 void desenhoJogador_andando(SDL_FRect& destino, bool olhando_esquerda) {
@@ -340,7 +464,7 @@ bool desenhoInimigo(
     // Restaura a cor original antes de desenhar.
     SDL_SetTextureColorMod(textura, 255, 255, 255);
 
-    // Aplica a tonalidade vermelha durante a preparação do ataque.
+    // Aplica a cor vermelho durante a preparação do ataque nos momentos certos
     if (vermelho) {
 
         if (!SDL_SetTextureColorMod(textura, 255, 0, 0)) {

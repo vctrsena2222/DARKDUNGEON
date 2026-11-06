@@ -11,12 +11,14 @@ enum class AnimacaoOrc {
     atacando
 };
 
+// funções relacionadas ao renderer
 void criarJanela();
 void desenharQuadrado(SDL_FRect& quadrado);
 void executarRenderer();
 void limparFrame();
 void redefinirRenderer();
 
+//funções relacionadas ao jogador
 bool carregarTextura_jogador_parado();
 bool carregarTextura_jogador_andar();
 bool carregarTextura_jogador_defesa();
@@ -48,3 +50,10 @@ bool desenhoInimigo(
     AnimacaoOrc animacao,
     bool vermelho
 );
+
+//funções relacionadas ao cenario
+bool carregarTexturaCenario();
+void desenharCenario();
+
+void desenharParede(SDL_FRect& destino);
+void desenharPorta(SDL_FRect& destino);

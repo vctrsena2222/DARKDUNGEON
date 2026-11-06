@@ -200,14 +200,14 @@ void sala::verificar_colisoes(jogador& jogador) {
 void sala::desenhar_paredes() {
     // Desenha todas as paredes
     for (paredes& parede : lista_paredes) {
-        desenharQuadrado(parede.usarquadrado_paredes());
+        desenharParede(parede.usarquadrado_paredes());
     }
 }
 
 void sala::desenhar_portas() {
     // Desenha todas as portas 
     for (porta& porta_atual : lista_porta) {
-        desenharQuadrado(porta_atual.usarQuadradoPorta());
+        desenharPorta(porta_atual.usarQuadradoPorta());
     }
 }
 

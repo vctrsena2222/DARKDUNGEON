@@ -45,7 +45,7 @@ public:
     SDL_FRect& usarquadrado_paredes() {
         return desenho_colisao;
     }
-};
+}; 
 
 class sala {
 private:
