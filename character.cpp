@@ -2,6 +2,7 @@
 #include <iostream>
 #include "enemy.h"
 #include "character.h"
+#include "audio.h"
 
 void jogador::movimentoJogador(const bool* teclado_movimento) {
 	teclado_movimento = SDL_GetKeyboardState(NULL);
@@ -63,17 +64,19 @@ bool jogador::atacando(const SDL_Event& evento) {
 		atacando_jogador = true;
 		inicio_ataque = SDL_GetTicks();
 
+		tocarSomAtaque();
+
 		return true;
 	}
 
 	return false;
 }
-
 void jogador::defendendo(const bool* teclado_movimento) {
 	defesa_jogador = teclado_movimento[SDL_SCANCODE_SPACE];
 
 	if (defesa_jogador && !defesa_anterior) {
 		inicio_defesa = SDL_GetTicks();
+		tocarSomDefesa();
 	}
 
 	defesa_anterior = defesa_jogador;

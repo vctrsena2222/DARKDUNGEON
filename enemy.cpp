@@ -1,6 +1,7 @@
 #include <SDL3/SDL.h>
 #include <cmath>
 #include <iostream>
+#include "audio.h"
 
 #include "character.h"
 #include "enemy.h"
@@ -164,8 +165,11 @@ void inimigo::atacando(jogador& jogador) {
             defesa_inimigo = false;
             atacando_inimigo = false;
 
+            tocarSomParry();
+
             std::cout << "PARRY REALIZADO" << std::endl;
         }
+        
         else if (!dano_aplicado &&
             tempo_ataque >= janela_parry) {
 

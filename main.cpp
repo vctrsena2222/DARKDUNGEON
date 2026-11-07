@@ -3,6 +3,7 @@
 #include "video.h"
 #include "game.h"
 #include "character.h"
+#include "audio.h"
 
 
 
@@ -10,6 +11,16 @@
 
 int main() {
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO); 
+    if (!inicializarAudio()) {
+        SDL_Quit();
+        return 1;
+    }
+
+    if (!carregarEfeitosSonoros()) {
+        encerrarAudio();
+        SDL_Quit();
+        return 1;
+    }
 
 	criarJanela();
 	
@@ -17,6 +28,6 @@ int main() {
 
 	
 
-
+	encerrarAudio();
 	return 0;
 }

@@ -2,6 +2,7 @@
 #include "entidade.h"
 #include <SDL3/SDL.h>
 
+
 class jogador;
 
 class inimigo : public entidade {
